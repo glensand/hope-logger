@@ -26,7 +26,8 @@ namespace hope::log {
     class logger final {
     public:
 
-	    explicit logger(ostream& stream, std::size_t system_max_threads_count = 128);
+	    explicit logger(ostream& stream, std::size_t system_max_threads_count 
+            = std::thread::hardware_concurrency());
 	    ~logger() noexcept;
 
         [[maybe_unused]] log_level get_log_level() const noexcept { return m_log_level; }

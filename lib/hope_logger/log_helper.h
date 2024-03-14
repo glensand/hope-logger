@@ -42,6 +42,11 @@ namespace hope::log {
             return helper;
         }
 
+        template<typename T>
+        friend void log_write(log_helper& helper, const T& val) {
+            helper.write_impl(val);
+        }
+
         /**
          *  Function needed to delegate call to the same operator<<, but with a little different semantic
          *  On MSVC it does not need, but another compilers can not call function with non const
@@ -67,14 +72,11 @@ namespace hope::log {
         }
 
         template<typename T>
-        void write_impl(const T& val) {
-            constexpr bool is_suitable = std::is_integral_v<T> || std::is_floating_point_v<T>;
-            if constexpr (is_suitable) {
-                std::array<char, 100> buffer{};
-                auto&& [ptr, ec] = std::to_chars(buffer.data(), buffer.data() + buffer.size(), val);
-                write_impl(buffer.data(), std::size_t(ptr) - std::size_t(buffer.data()));
-            }
-            static_assert(is_suitable, "<--- hope::logger: An attempt was made to write value of unregistered type.");
+        std::enable_if_t<std::is_integral_v<T> || std::is_floating_point_v<T>, void>
+        write_impl(const T& val) {
+            std::array<char, 100> buffer{};
+            auto&& [ptr, ec] = std::to_chars(buffer.data(), buffer.data() + buffer.size(), val);
+            write_impl(buffer.data(), std::size_t(ptr) - std::size_t(buffer.data()));
         }
 
     private:
@@ -85,13 +87,15 @@ namespace hope::log {
 	    logger&	m_logger;	// Ref to the global logger, all bytes had to be written there
     };
 
-    template<typename T>
-    void log_write(log_helper& helper, const T& val) {
-        helper.write_impl(val);
-    }
-
 }
 
-#define HOPE_INTERIOR_LOG(PRIORITY, logger) if((logger).should_write(PRIORITY)) hope::log_helper(logger, PRIORITY) <<
-#define HOPE_INTERIOR_LOG_TRACE(PRIORITY, logger) if((logger).should_write(PRIORITY)) hope::log_helper(logger, PRIORITY) <<  __FUNCTION__ << " "
+#define HOPE_INTERIOR_LOG(PRIORITY, logger) \
+    if ((logger).get_log_level() <= PRIORITY) \
+        hope::log::log_helper((logger), PRIORITY)
+
+
+#define HOPE_INTERIOR_LOG_TRACE(PRIORITY, logger) \
+    if ((logger).get_log_level() <= PRIORITY) \
+        hope::log::log_helper((logger), PRIORITY) <<  __FUNCTION__ << " "
+
 #define HOPE_VAL(V) hope::log_helper::build_value(V)
