@@ -38,13 +38,8 @@ namespace hope::log {
 
         template<typename T>
         friend log_helper& operator<<(log_helper& helper, const T& value) {
-            log_write(helper, value);
+            helper.write_impl(value);
             return helper;
-        }
-
-        template<typename T>
-        friend void log_write(log_helper& helper, const T& val) {
-            helper.write_impl(val);
         }
 
         /**
@@ -67,7 +62,7 @@ namespace hope::log {
         void write_impl(const value_wrapper<T>& object) {
             assert(m_buffer);
             m_buffer->put(" [", 2);
-            write(object);
+            write_impl(object.value);
             m_buffer->put("] ", 2);
         }
 
@@ -98,4 +93,4 @@ namespace hope::log {
     if ((logger).get_log_level() <= PRIORITY) \
         hope::log::log_helper((logger), PRIORITY) <<  __FUNCTION__ << " "
 
-#define HOPE_VAL(V) hope::log_helper::build_value(V)
+#define HOPE_VAL(V) hope::log::log_helper::build_value(V)
