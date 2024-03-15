@@ -14,6 +14,8 @@ namespace hope::log {
 
     class ostream {
     public:
+        virtual ~ostream() = default;
+        
         [[nodiscard]] virtual bool is_open() const noexcept = 0;
         virtual void write(const void* data, std::size_t size) = 0;
         virtual void flush()  = 0;
