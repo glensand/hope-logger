@@ -27,7 +27,7 @@ namespace hope::log {
         std::ofstream m_stream_impl;
     };
 
-    ostream* crate_stream(std::string_view file_name) {
+    ostream* create_stream(std::string_view file_name) {
         return new ofstream(file_name);
     }
 

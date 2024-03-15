@@ -18,8 +18,3 @@ file(GLOB CL_SOURCES
 
 add_library(hope_logger STATIC ${CL_SOURCES})
 target_include_directories(hope_logger PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
-
-set(CMAKE_INSTALL_DIRECTORY ${CMAKE_BINARY_DIR})
-
-INSTALL(DIRECTORY hope_logger/ DESTINATION ${CMAKE_INSTALL_DIRECTORY}/include/hope_logger
-        FILES_MATCHING PATTERN "*.h")

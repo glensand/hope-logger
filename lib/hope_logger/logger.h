@@ -38,6 +38,7 @@ namespace hope::log {
         buffer* alloc_buffer();
         void write_buffer(buffer* message);
         void write_task();
+        
 
         mpmc_bounded_queue<buffer*> m_buffer_pool;
         logger_mpsc_queue<buffer*> m_write_queue; // todo:: use buffered queue

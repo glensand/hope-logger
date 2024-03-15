@@ -35,6 +35,7 @@ namespace hope::log {
     }
 
     log_helper::~log_helper() {
+        m_buffer->put("\n", 1);
         m_logger.write_buffer(m_buffer);
     }
 

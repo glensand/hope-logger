@@ -85,12 +85,10 @@ namespace hope::log {
 }
 
 #define HOPE_INTERIOR_LOG(PRIORITY, logger) \
-    if ((logger).get_log_level() <= PRIORITY) \
-        hope::log::log_helper((logger), PRIORITY)
+    hope::log::log_helper((logger), PRIORITY)
 
 
 #define HOPE_INTERIOR_LOG_TRACE(PRIORITY, logger) \
-    if ((logger).get_log_level() <= PRIORITY) \
-        hope::log::log_helper((logger), PRIORITY) <<  __FUNCTION__ << " "
+    hope::log::log_helper((logger), PRIORITY) <<  __FUNCTION__ << " "
 
 #define HOPE_VAL(V) hope::log::log_helper::build_value(V)

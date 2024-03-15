@@ -21,6 +21,6 @@ namespace hope::log {
         virtual void flush()  = 0;
     };
 
-    ostream* crate_stream(std::string_view file_name);
+    ostream* create_stream(std::string_view file_name);
 
 }
