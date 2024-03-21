@@ -53,6 +53,7 @@ namespace hope::log {
                 delete wb;
             }
         }
+        m_stream.flush();
     }
 
 }
