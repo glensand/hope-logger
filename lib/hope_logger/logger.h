@@ -11,6 +11,8 @@
 #include <string>
 #include <atomic>
 #include <thread>
+#include <mutex>
+#include <condition_variable>
 
 #include "hope_logger/log_level.h"
 #include "hope_logger/buffer.h"

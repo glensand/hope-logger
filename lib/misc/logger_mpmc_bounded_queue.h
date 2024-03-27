@@ -9,6 +9,7 @@
 #pragma once
 
 #include <atomic>
+#include <cassert>
 
 namespace hope::log {
 

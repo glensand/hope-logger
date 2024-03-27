@@ -11,6 +11,7 @@
 #include <charconv>
 #include <array>
 #include <string_view>
+#include <cassert>
 
 #include "hope_logger/buffer.h"
 #include "hope_logger/log_level.h"
