@@ -40,6 +40,8 @@ namespace hope::log {
         buffer* buffer_instance{ nullptr };
         if (!m_buffer_pool.try_dequeue(buffer_instance)){
             buffer_instance = new buffer;
+        } else {
+            buffer_instance->clear();
         }
         return buffer_instance;
     }
