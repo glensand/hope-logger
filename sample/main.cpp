@@ -4,29 +4,17 @@
 
 #include <iostream>
 
-class sstream final : public hope::log::ostream {
-    virtual bool is_open() const noexcept override {
-        return true;
-    }
-
-    virtual void write(const void* data, std::size_t size) override {
-        std::cout.write((char*)data, size);
-    }
-
-    virtual void flush() override {
-
-    }
-
-public:
-    sstream() = default;
-};
-
 int main() {
-    auto* stream = new sstream;//hope::log::create_stream("log.log");
+
+    auto* stream = hope::log::create_multy_stream( {
+        hope::log::create_console_stream(),
+        hope::log::create_file_stream("log.txt")
+    });
+
     auto* logger = new hope::log::logger(*stream);
 
     // while (true) {
-        HOPE_INTERIOR_LOG(hope::log::log_level::error, *logger) << "Frist msg";
+        HOPE_INTERIOR_LOG(hope::log::log_level::error, *logger) << "First msg";
         HOPE_INTERIOR_LOG(hope::log::log_level::error, *logger) << "Sec msg";
         HOPE_INTERIOR_LOG(hope::log::log_level::error, *logger) << "Thrd msg";
     //}

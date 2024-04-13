@@ -9,6 +9,7 @@
 #pragma once
 
 #include <string_view>
+#include <vector>
 
 namespace hope::log {
 
@@ -21,6 +22,7 @@ namespace hope::log {
         virtual void flush()  = 0;
     };
 
-    ostream* create_stream(std::string_view file_name);
-
+    ostream* create_file_stream(std::string_view file_name);
+    ostream* create_multy_stream(std::vector<ostream*>&& in_streams);
+    ostream* create_console_stream();
 }
