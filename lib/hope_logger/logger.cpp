@@ -19,8 +19,8 @@ namespace hope::log {
     }
 
     logger::logger(ostream &stream, std::size_t system_max_threads_count)
-        : m_stream(stream)
-        , m_buffer_pool(system_max_threads_count) {
+        : m_buffer_pool(system_max_threads_count)
+        , m_stream(stream) {
         m_enabled.store(true, std::memory_order_release);
         m_writing_thread = std::thread([this]{ 
             while(m_enabled.load(std::memory_order_acquire)) {
