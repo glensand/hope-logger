@@ -46,8 +46,9 @@ namespace hope::log {
             }
 
             virtual bool is_open() const noexcept override {
-                return std::ranges::all_of(m_streams, 
-                    [](auto* stream){ return stream->is_open();});
+                for (auto* stream : m_streams)
+                    if (!stream->is_open()) return false;
+                return true;
             }
 
             virtual void write(const void* data, std::size_t size) override {
