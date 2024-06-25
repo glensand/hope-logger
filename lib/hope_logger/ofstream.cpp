@@ -6,13 +6,15 @@
 
 namespace hope::log {
 
-    ostream* create_file_stream(std::string_view file_name) {
+    ostream* create_file_stream(std::string file_name, std::size_t file_max_size) {
         class ofstream final : public ostream {
         public:
 
-            explicit ofstream(std::string_view file_name){
-                // assumed binary append mode is best choice for default stream
-                m_stream_impl.open(file_name.data(), std::ios::binary | std::ios::app);
+            explicit ofstream(std::string file_name, std::size_t file_max_size) 
+                : m_file_name(std::move(file_name))
+                , m_file_max_size(file_max_size)
+            {
+                create_stream();
             }
 
             virtual bool is_open() const noexcept override {
@@ -21,6 +23,12 @@ namespace hope::log {
 
             virtual void write(const void* data, std::size_t size) override {
                 m_stream_impl.write((const char*)data, (long)size);
+                m_file_size += size;
+                if (m_file_size >= m_file_max_size) {
+                    m_stream_impl.close();
+                    m_stream_impl = std::ofstream();
+                    create_stream();
+                }
             }
 
             virtual void flush() override {
@@ -28,10 +36,25 @@ namespace hope::log {
             }
 
         private:
+            void create_stream() {
+                // assumed binary append mode is best choice for default stream
+                char time_buf[100];
+                time_t rawTime = 0;
+                time(&rawTime);
+                auto* time = localtime(&rawTime);
+                strftime(time_buf, 100, "%d_%m_%Y_%H_%M_%S_", time);
+                const auto timed_file_name = time_buf + m_file_name;
+                m_stream_impl.open(timed_file_name, std::ios::binary | std::ios::app);
+            }
+
+            const std::string m_file_name;
+            const std::size_t m_file_max_size;
+            
             std::ofstream m_stream_impl;
+            std::size_t m_file_size = 0;
         };
 
-        return new ofstream(file_name);
+        return new ofstream(std::move(file_name), file_max_size);
     }
 
     ostream *create_multy_stream(std::vector<ostream*> &&in_streams) {
