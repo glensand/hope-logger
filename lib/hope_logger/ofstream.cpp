@@ -14,6 +14,11 @@ namespace hope::log {
                 : m_file_name(std::move(file_name))
                 , m_file_max_size(file_max_size)
             {
+                std::filesystem::path p(m_file_name);
+                if (!p.parent_path().empty()){
+                    std::filesystem::create_directories(p.parent_path());
+                }
+
                 create_stream();
             }
 
@@ -38,16 +43,24 @@ namespace hope::log {
         private:
             void create_stream() {
                 // assumed binary append mode is best choice for default stream
+                std::filesystem::path p(m_file_name);
+                const auto file_name = p.filename().string();
+                const auto path = p.parent_path().string();
                 char time_buf[100];
                 time_t rawTime = 0;
                 time(&rawTime);
                 auto* time = localtime(&rawTime);
                 strftime(time_buf, 100, "%d_%m_%Y_%H_%M_%S_", time);
-                const auto timed_file_name = time_buf + m_file_name;
+                std::string timed_file_name;
+                if (path.empty()) {
+                    timed_file_name = time_buf + m_file_name;
+                } else {
+                    timed_file_name = path + "/" + time_buf + file_name;
+                }
                 m_stream_impl.open(timed_file_name, std::ios::binary | std::ios::app);
             }
 
-            const std::string m_file_name;
+            std::string m_file_name;
             const std::size_t m_file_max_size;
             
             std::ofstream m_stream_impl;
