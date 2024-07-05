@@ -29,7 +29,7 @@ namespace hope::log {
     public:
 
 	    explicit logger(ostream& stream, std::size_t system_max_threads_count 
-            = std::thread::hardware_concurrency());
+            = std::thread::hardware_concurrency(), bool use_flush_thread = true);
 	    ~logger() noexcept;
 
         [[maybe_unused]] log_level get_log_level() const noexcept { return m_log_level; }
@@ -53,6 +53,7 @@ namespace hope::log {
         std::condition_variable m_message_added;
         std::mutex m_message_added_mutex;
 
+        bool m_use_flush_thread;
 	    friend struct log_helper;
     };
 

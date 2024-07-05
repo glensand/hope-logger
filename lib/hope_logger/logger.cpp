@@ -18,22 +18,30 @@ namespace hope::log {
         }
     }
 
-    logger::logger(ostream &stream, std::size_t system_max_threads_count)
+    logger::logger(ostream &stream, std::size_t system_max_threads_count, bool use_flush_thread)
         : m_buffer_pool(system_max_threads_count)
-        , m_stream(stream) {
+        , m_stream(stream) 
+        , m_use_flush_thread(use_flush_thread) {
+        
         m_enabled.store(true, std::memory_order_release);
-        m_writing_thread = std::thread([this]{ 
-            while(m_enabled.load(std::memory_order_acquire)) {
-                write_task();
-                std::unique_lock lk(m_message_added_mutex);
-                m_message_added.wait(lk);
-            }
-        });
+        if (m_use_flush_thread) {
+            m_writing_thread = std::thread([this]{ 
+                while(m_enabled.load(std::memory_order_acquire)) {
+                    write_task();
+                    std::unique_lock lk(m_message_added_mutex);
+                    m_message_added.wait(lk);
+                }
+            });
+        }
     }
 
     void logger::write_buffer(buffer* message) {
         m_write_queue.enqueue(message);
-        m_message_added.notify_one();
+        if (m_use_flush_thread) {
+            m_message_added.notify_one();
+        } else {
+            write_task();
+        }
     }
 
     buffer *logger::alloc_buffer() {
