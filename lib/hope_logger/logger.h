@@ -53,6 +53,8 @@ namespace hope::log {
         std::condition_variable m_message_added;
         std::mutex m_message_added_mutex;
 
+        std::mutex m_write_guard;
+        
         bool m_use_flush_thread;
 	    friend struct log_helper;
     };

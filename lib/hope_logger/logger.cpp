@@ -36,11 +36,20 @@ namespace hope::log {
     }
 
     void logger::write_buffer(buffer* message) {
-        m_write_queue.enqueue(message);
         if (m_use_flush_thread) {
+            m_write_queue.enqueue(message);
             m_message_added.notify_one();
         } else {
-            write_task();
+            {
+                const std::lock_guard lock(m_write_guard);
+                m_stream.write(message->m_buffer_impl.data(), message->m_bytes_written);
+                m_stream.write(message->m_additional_buffer.data(), message->m_additional_buffer.size());
+                m_stream.flush();
+            }
+
+            if (!m_buffer_pool.try_enqueue(message)){
+                delete message;
+            }
         }
     }
 
