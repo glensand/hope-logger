@@ -3,6 +3,7 @@
 #include <fstream>
 #include <algorithm>
 #include <iostream>
+#include <filesystem>
 
 namespace hope::log {
 
