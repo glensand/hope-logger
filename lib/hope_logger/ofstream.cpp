@@ -54,7 +54,7 @@ namespace hope::log {
             std::size_t m_file_size = 0;
         };
 
-        return new ofstream(std::move(file_name), file_max_size);
+        return new ofstream(std::move(file_name), file_max_size * 1024 * 1024);
     }
 
     ostream *create_multy_stream(std::vector<ostream*> &&in_streams) {
