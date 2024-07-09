@@ -31,6 +31,7 @@ namespace hope::log {
                 m_stream_impl.write((const char*)data, (long)size);
                 m_file_size += size;
                 if (m_file_size >= m_file_max_size) {
+                    m_file_size = 0;
                     m_stream_impl.close();
                     m_stream_impl = std::ofstream();
                     create_stream();
