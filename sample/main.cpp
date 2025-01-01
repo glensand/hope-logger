@@ -4,11 +4,15 @@
 
 #include <iostream>
 
-int main() {
-
+int main(int argc, char **argv) {
+    std::string root_path("");
+    if (argc > 1) {
+        root_path = argv[1];
+        root_path += "/";
+    }
     auto* stream = hope::log::create_multy_stream( {
         hope::log::create_console_stream(),
-        hope::log::create_file_stream("log.txt")
+        hope::log::create_file_stream(root_path + "log.txt")
     });
 
     auto* logger = new hope::log::logger(*stream);

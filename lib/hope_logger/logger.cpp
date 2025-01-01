@@ -19,7 +19,7 @@ namespace hope::log {
     }
 
     logger::logger(ostream &stream, std::size_t system_max_threads_count, bool use_flush_thread)
-        : m_buffer_pool(system_max_threads_count)
+        : m_buffer_pool(128) // hardcoded for now, no more than 128 threads is supported
         , m_stream(stream) 
         , m_use_flush_thread(use_flush_thread) {
         
