@@ -48,7 +48,9 @@ namespace hope::log {
                 std::filesystem::path p(m_file_name);
                 const auto file_name = p.filename().string();
                 const auto path = p.parent_path().string();
-                std::filesystem::create_directories(path);
+                if (!path.empty()){
+                    std::filesystem::create_directories(path);
+                }
                 char time_buf[100];
                 time_t rawTime = 0;
                 time(&rawTime);
