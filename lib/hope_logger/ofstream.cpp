@@ -121,7 +121,7 @@ namespace hope::log {
                 std::cout.write((const char*)data, size);
             }
 
-            virtual void flush() override { }
+            virtual void flush() override { std::cout.flush(); }
         };
 
         return new console_stream;
